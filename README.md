@@ -14,7 +14,7 @@
 
 ## Refactoring techniques:
 
-1) [Change names to communicate intent](examples/technique1.md)
-2) [No magic numbers / variables](examples/technique2.md)
-3) [One responsibility per function / class](examples/technique3.md)
-4) [Do not be obsessed with primitives](examples/technique4.md)
+1. [Change names to communicate intent](examples/technique1.md)
+2. [No magic numbers / variables](examples/technique2.md)
+3. [One responsibility per function / class](examples/technique3.md)
+4. [Do not be obsessed with primitives](examples/technique4.md)
