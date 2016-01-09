@@ -37,7 +37,7 @@ function add_member($new_member){
   fclose($fp);
 }
 
-$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com']
+$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com'];
 var_dump(add_member($new_member));
 ```
 
@@ -162,7 +162,7 @@ function add_member($new_member){
   return true;
 }
 
-$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com']
+$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com'];
 var_dump(add_member($new_member));
 ```
 

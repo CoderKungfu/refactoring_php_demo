@@ -11,30 +11,28 @@ function get_members() {
   return $members;
 }
 
-function check_record($user){
-  $user_values = array_values($user);
-  foreach(get_members() as $member) {
-    if (array_intersect($user_values, $member)) {
+function is_member_in_list($members, $new_member){
+  foreach($members as $member) {
+    if ($member[2] == $new_member[2]) // Email field
       return true;
-    }
   }
   return false;
 }
 
-function add_member($user){
-  if (check_record($user)) return false;
-
+function add_member_to_file($user) {
   $fp = fopen('members.csv', 'a');
-  fputcsv($fp, array_values($user));
+  fputcsv($fp, $user);
   fclose($fp);
+}
 
+function add_member($new_member){
+  $current_members = get_members();
+  if (is_member_in_list($current_members, $new_member))
+    return false;
+
+  add_member_to_file($new_member);
   return true;
 }
 
-$new_user = [
-  'first_name'=>'Leia',
-  'last_name'=>'Organa',
-  'email'=>'organa@newrepublic.com'
-];
-
-var_dump(add_member($new_user));
+$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com'];
+var_dump(add_member($new_member));

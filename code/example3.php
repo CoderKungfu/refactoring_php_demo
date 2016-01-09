@@ -1,17 +1,17 @@
 <?php
-
-function add_member($first_name, $last_name, $email){
+function add_member($new_member){
   $fp = fopen('members.csv', 'r+');
 
   while (($data = fgetcsv($fp)) !== FALSE) {
-    if ($data[2] == $email) {
+    if ($data[2] == $new_member[2]) {
       fclose($fp);
       return false;
     }
   }
 
-  fputcsv($fp, [$first_name, $last_name, $email]);
+  fputcsv($fp, $new_member);
   fclose($fp);
 }
 
-var_dump(add_member('Michael', 'Cheng', 'miccheng@gmail.com'));
+$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com'];
+var_dump(add_member($new_member));
