@@ -8,7 +8,6 @@
 - Use objects that work together.
 
 ```php
-<?php
 class User {
   public $first_name;
   public $last_name;

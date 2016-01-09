@@ -5,7 +5,6 @@
 ### Example: Doing too many things!
 
 ```php
-<?php
 function add_member($first_name, $last_name, $email){
   $fp = fopen('members.csv', 'r+');
 
@@ -29,7 +28,6 @@ Abstract away implementation details into separate functions.<br/>
 What if we want to check for duplicate names as well?
 
 ```php
-<?php
 function get_members() {
   $fp = fopen('members.csv', 'r');
 

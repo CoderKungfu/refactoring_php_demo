@@ -5,8 +5,6 @@
 ### Example A - Mystery Variables
 
 ```php
-<?php
-
 $a = 'Michael';
 $b = 'Cheng';
 
@@ -18,8 +16,6 @@ What does `$a` and `$b` stand for? How do you change it to give it *meaning*?
 **The refactored code:**
 
 ```php
-<?php
-
 $first_name = 'Michael';
 $last_name = 'Cheng';
 
