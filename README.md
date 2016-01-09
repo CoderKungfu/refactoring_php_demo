@@ -2,12 +2,15 @@
 
 ## What is refactoring?
 
-- A change made to the internal structure of software to make it easier to understand and cheaper to modify without changing its observable behavior.
-- To restructure software by applying a series of refactorings without changing its observable behavior.
+- A change made to the internal structure of software to make it:
+	-  Easier to understand.
+	-  Cheaper to make future changes.
+- This does not change the observable behavior of the software.
+- Tests help ensure that we didn't change behavior.
+
+## Why do we refactor?
+
 - Software left alone will decay.
-
-## Why do we Refactor?
-
 - Makes it cheaper to make changes.
 - Make it easier to understand.
 - Improves the design of the code.
