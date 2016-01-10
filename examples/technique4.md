@@ -41,7 +41,27 @@ Instead of modeling the `$new_member` as an `array`, let's imagine it as an `obj
 
 ### Class Responsibility & Collaborators (CRC)
 
-To do this, we prepare some CRC cards:
+To do this, we prepare some CRC cards of how the 2 classes would look like:
+
+```
+Class: Member
+---------------------------------------------
+Member particulars         |
+                           |
+
+
+Class: ClubMembershipRegister
+---------------------------------------------
+Reads CSV file             |  Member
+List of members            |
+Who is a current member    |
+Adds a member              |
+Writes new member to CSV   |
+```
+
+Hmm... the `ClubMembershipRegister` class seems to be knowing too much about how we store the data.
+
+Let's split the storage bits into a separate class.
 
 ```
 Class: Member
@@ -65,6 +85,7 @@ Writes to CSV file         |
                            |
 ```
 
+
 ### From CRC to Class
 
 ```php
@@ -86,7 +107,48 @@ class DataStore {
 }
 ```
 
-## The Refactored Code
+## Let's write some tests
+
+Here's how the `Member` class is tested.
+
+```php
+class MemberTest extends PHPUnit_Framework_TestCase
+{
+  public function testConstructor()
+  {
+    $first_name = 'Michael';
+    $last_name = 'Cheng';
+    $email = 'miccheng@gmail.com';
+
+    $options = ['first_name'=>$first_name, 'last_name'=>$last_name, 'email'=>$email];
+    $member = new Member($options);
+
+    $this->assertEquals($first_name, $member->first_name);
+    $this->assertEquals($last_name, $member->last_name);
+    $this->assertEquals($email, $member->email);
+  }
+
+  public function testEquals() {
+    $first_name = 'Michael';
+    $last_name = 'Cheng';
+    $email = 'miccheng@gmail.com';
+    $member = new Member(['first_name'=>$first_name, 'last_name'=>$last_name, 'email'=>$email]);
+
+    $same_email = new Member(['first_name'=>'Peter', 'last_name'=>'Paul', 'email'=>$email]);
+    $this->assertTrue($member->equals($same_email));
+
+    $same_name = new Member(['first_name'=>$first_name, 'last_name'=>$last_name, 'email'=>'test@example.com']);
+    $this->assertTrue($member->equals($same_name));
+
+    $diff_person = new Member(['first_name'=>'1', 'last_name'=>'2', 'email'=>'test@example.com']);
+    $this->assertFalse($member->equals($diff_person));
+  }
+}
+```
+
+You can see more of the [test codes here](../code/tests/).
+
+## The New Classes
 
 ```php
 class Member {
