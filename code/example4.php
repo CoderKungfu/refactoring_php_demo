@@ -1,22 +1,26 @@
 <?php
-class User {
+class Member {
   public $first_name;
   public $last_name;
   public $email;
 
-  public function __construct($first_name, $last_name, $email) {
-    $this->first_name = $first_name;
-    $this->last_name = $last_name;
-    $this->email = $email;
+  public function __construct($options) {
+    $this->first_name = $options['first_name'];
+    $this->last_name = $options['last_name'];
+    $this->email = $options['email'];
   }
 
-  public function same_as(User $other_user) {
-    if ($other_user->email == $this->email)
-      return true;
+  public static function init_member($record) {
+    $options = array_combine(['first_name','last_name', 'email'], $record);
+    return new Member($options);
+  }
+
+  public function equals(Member $query_member) {
+    if ($query_member->email == $this->email) return true;
 
     if (
-      $other_user->first_name == $this->first_name &&
-      $other_user->last_name == $this->last_name
+      $query_member->first_name == $this->first_name &&
+      $query_member->last_name == $this->last_name
     )
       return true;
 
@@ -28,46 +32,59 @@ class User {
   }
 }
 
-class ClubMembership {
-  private static $membership_file = 'members.csv';
-  private $members = [];
+class CSVDataStore {
+  private static $csv_file;
   private $file_handle;
 
-  public function __construct() {
-    $this->file_handle = fopen(self::$membership_file, 'r+');
+  public function __construct($options=array()) {
+    self::$csv_file = empty($options['file']) ? __DIR__ . '/members.csv' : $options['file'];
+    $this->file_handle = fopen(self::$csv_file, 'a+');
   }
 
-  public function get_members() {
-    if (!empty($this->members)) return $this->members;
-
+  public function read_all() {
+    rewind($this->file_handle);
+    $data = [];
     while (($values = fgetcsv($this->file_handle)) !== FALSE) {
-      $user = new User($values[0], $values[1], $values[2]);
-      array_push($this->members, $user);
+      array_push($data, $values);
     }
-
-    return $this->members;
+    return $data;
   }
 
-  public function check_record(User $user){
-    foreach($this->get_members() as $member) {
-      if ($member->same_as($user))
+  public function append($data) {
+    return fputcsv($this->file_handle, $data) > 0;
+  }
+}
+
+class ClubMembershipRegister {
+  private $data_store;
+
+  public function __construct($data_store=null) {
+    $this->data_store = (empty($data_store)) ? new CSVDataStore() : $data_store;
+  }
+
+  public function all_members() {
+    $all_records = $this->data_store->read_all();
+    return array_map('Member::init_member', $all_records);
+  }
+
+  public function is_in_register(Member $query_member){
+    foreach($this->all_members() as $member) {
+      if ($member->equals($query_member))
         return true;
     }
     return false;
   }
 
-  public function add_member(User $user) {
-    if ($this->check_record($user)) return false;
+  public function add_member(Member $new_member) {
+    if ($this->is_in_register($new_member)) return false;
 
-    fputcsv($this->file_handle, $user->values());
-    array_push($this->members, $user);
+    $new_record = $new_member->values();
+    $this->data_store->append($new_record);
 
     return true;
   }
 }
 
-$new_user = new User('Michael', 'Jordan', 'mj@nba.com');
-
-$membership = new ClubMembership();
-
-var_dump($membership->add_member($new_user));
+// $new_member = new Member(['first_name'=>'Michael', 'last_name'=>'Jordan', 'email'=>'mj@nba.com']);
+// $membership = new ClubMembershipRegister();
+// var_dump($membership->add_member($new_member));
