@@ -71,11 +71,8 @@ class Member {
 }
 
 class ClubMembership {
-  private $members = [];
-  
-  public function get_members(){ }
-  public function is_member_in_list($new_member) { }
-  public function add_member_to_file($new_member) { }
+  public function all_members(){ }
+  public function is_in_register($new_member) { }
   public function add_member($new_member) { }
 }
 
