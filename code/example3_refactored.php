@@ -19,9 +19,9 @@ function is_member_in_list($members, $new_member){
   return false;
 }
 
-function add_member_to_file($user) {
+function add_member_to_file($new_member) {
   $fp = fopen('members.csv', 'a');
-  fputcsv($fp, $user);
+  fputcsv($fp, $new_member);
   fclose($fp);
 }
 
