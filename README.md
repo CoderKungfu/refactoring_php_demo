@@ -15,7 +15,7 @@
 - Make it easier to understand.
 - Improves the design of the code.
 
-## Refactoring techniques:
+## Common refactoring techniques:
 
 1. [Change names to communicate intent](examples/technique1.md)
 2. [No magic numbers / variables](examples/technique2.md)

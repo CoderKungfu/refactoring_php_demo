@@ -96,7 +96,7 @@ function is_member_in_list($members, $new_member){
 }
 ```
 
-#### c. Pull out "Adds new member to the list"
+#### c. Extract "Adds new member to the list" into a function
 
 ```php
 function add_member_to_file($user) {
@@ -106,7 +106,7 @@ function add_member_to_file($user) {
 }
 ```
 
-#### d. And we finally re-implement `add_member` to use the above behavior
+### Step 3: Refactor `add_member` to use the new functions
 
 ```php
 function add_member($new_member){

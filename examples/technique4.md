@@ -72,9 +72,9 @@ Member particulars         |
 
 Class: ClubMembershipRegister
 ---------------------------------------------
-All members                |
-Who is a current member    |  Member
-Adds a member              |  DataStore
+All members                |  Member
+Who is a current member    |  DataStore
+Adds a member              |
                            |
 
 
@@ -95,7 +95,7 @@ class Member {
   public $email;
 }
 
-class ClubMembership {
+class ClubMembershipRegister {
   public function all_members(){ }
   public function is_in_register($new_member) { }
   public function add_member($new_member) { }
