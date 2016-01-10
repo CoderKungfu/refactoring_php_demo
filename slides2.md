@@ -92,7 +92,7 @@ class: center, middle
 Your manager came to you again, rubbing his hands, he says:
 --
 
-> I am thinking of adding a new field to the register. I'm getting confirmation from the directors. But in any case, can you make sure your script can support an address field in the future?
+> "I am thinking of adding a new field to the register. I'm getting confirmation from the directors. But in any case, can you make sure your script can support an address field in the future?"
 
 .center.emoji[ 🤓🤓🤓 ]
 ---
@@ -338,9 +338,9 @@ Time: 91 ms, Memory: 11.75Mb
 template: technique4_header
 
 #### Step 5: Refactor
+--
 
 What can we do to make this code better?
---
 
 ```php
 public function __construct($options) {
@@ -351,15 +351,31 @@ public function __construct($options) {
 ```
 --
 
-Do you think its brittle to have to set these things explicitly?
+Do you think its cumbersome to have to set the ***field names*** explicitly?
+
+--
+```php
+public function __construct($options) {
+  $this->first_name = $options['first_name'];
+  $this->last_name = $options['last_name'];
+  $this->email = $options['email'];
+* $this->address = $options['address'];
+* $this->mobile = $options['mobile'];
+* $this->gender = $options['gender'];
+  ...
+}
+```
+
 ---
 
 template: technique4_header
 
 #### Step 5: Refactor
 
+Let's yank out the list of fields into a class variable
+
 ```php
-private static $known_fields = [ 'first_name', 'last_name', 'email' ];
+*private static $known_fields = [ 'first_name', 'last_name', 'email' ];
 
 public function __construct($options) {
   foreach(self::$known_fields as $field_name) {
@@ -557,7 +573,7 @@ var_dump(add_member($new_member));
 
 template: technique4_header
 
-#### A cleaner approach
+#### A cleaner approach to revising the `add_member` function
  
 Change the actual implementation of the system:
 --
@@ -587,10 +603,26 @@ Possibly when your manager confirms the changes?
 
 --
 
-    - Makes sure your code changes didn't change behavior in subsequent refactoring attempts
+    - Ensure your code changes didn't change behavior in subsequent refactoring attempts
 --
 
     - Ensure you didn't introduce any bugs
 --
 
     - Tests allows you to make changes with confidence
+--
+
+- Only introduce backward incompatible **API** changes as last resort 
+
+--
+
+    - eg. Replace the `add_member` function with a cleaner implementation 
+---
+
+class: center, middle
+
+# Questions?
+
+## Twitter: @CoderKungfu
+
+### https://github.com/CoderKungfu/refactoring_php_demo
