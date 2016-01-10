@@ -20,9 +20,12 @@ class: center, middle
 --
 
 - A change made to the internal structure of software to make it:
+
 --
 
     1.  Easier to understand
+--
+
 	2.  Cheaper to make future changes
 --
 
@@ -157,7 +160,7 @@ echo amount_in_usd(100);
 
 ```php
 class Currency {
-*  const USD_EXCHANGE_RATE = 1.4;
+* const USD_EXCHANGE_RATE = 1.4;
 
   public static function in_usd($amount) {
     return $amount * self::USD_EXCHANGE_RATE;
@@ -173,38 +176,42 @@ class: center, middle
 
 # One responsibility per function / class
 ---
+name: technique3_header1
 
 ## Technique 3: One responsibility per function / class
 
 ### Example: Club Membership Register
---
+---
+
+template: technique3_header1
 
 #### Background
 
-You are a software guy at a country club and you are told to maintain a register of club members in `CSV` format:
+You are a software guy at a country club and you maintain a register of club members in `CSV` format:
 
+--
 ```csv
 Michael,Cheng,miccheng@gmail.com
 Luke,Skywalker,luke.skywalker@jedi.com
 ```
---
-
-Your manager wants you to make a PHP script to manage the members register.
 ---
 
-## Technique 3: One responsibility per function / class
+template: technique3_header1
 
-### Example: Club Membership Register
+Your manager wants you to make a PHP script to manage the members register.
+--
 
 #### Feature Story
 
 > "I want to add a new member to the end of the file.
 > If the email is already in the list, ignore the new entry."
+
+.center.emoji[ 🤓🤓🤓 ]
 ---
 
 ### Technique 3: One responsibility per function / class
 
-You quickly whip together a quick PHP function to meet the above requirement:
+You quickly whip together a proof-of-concept PHP function to meet the above requirement:
 
 ```php
 function add_member($new_member){
@@ -226,16 +233,28 @@ var_dump(add_member($new_member));
 ```
 ---
 
+class: center, middle
+
+# It works! 😎😎😎
+
+![Fuck yeah!](http://lovelivegrow.com/wp-content/uploads/2012/11/Fuck-Yeah.jpg)
+
+---
 ### Technique 3: One responsibility per function / class
 
-### Questions
+### Questions 🤔
+--
 
 - How many things is `add_member` doing?
+
 --
 
     1. Opens CSV file
+--
     2. Checks for duplicate email(?)
+--
     3. Ignores if its already there
+--
     4. Adds it in if its not
 --
 - Is it too much? Ideally, each function should only have 1 responsibility.
@@ -252,7 +271,7 @@ var_dump(add_member($new_member));
 - Abstract away implementation details into separate functions.
 --
 
-- As your self: *"What if"* questions.
+- Ask your self: ***"What if..."*** questions.
 ---
 
 ### Technique 3: One responsibility per function / class
@@ -348,21 +367,42 @@ var_dump(add_member($new_member));
 .center.emoji[ 😁😁😁 ]
 
 ---
+class: center, middle
+
+# After 2 months...
+
+---
 
 ### Technique 3: One responsibility per function / class
 
 ### Feature Change
+
 --
 
-After 2 months...
+> "I want this to also check that the name of the user is not in the list and ignore that too."
+
+.center.emoji[ 😣😣😣 ]
+
 --
-
-> I want this to also check that the name of the user is not in the list and ignore that too.
-
-???
-So your manager came back to you after 2 months and tells you that there's a bug in the code.
 
 People with same name but different email addresses are also being added to the list. You have to help him prevent this in the future.
+---
+
+### Technique 3: One responsibility per function / class
+
+### The Code Change
+
+--
+#### Functions list:
+
+- get_members()
+- is_member_in_list($members, $new_member)
+- add_member_to_file($user)
+- add_member($new_member)
+
+--
+
+#### Where do you think the code change should happen?
 ---
 
 ### Technique 3: One responsibility per function / class
@@ -372,11 +412,9 @@ People with same name but different email addresses are also being added to the 
 #### Functions list:
 
 - get_members()
-- is_member_in_list($members, $new_member)
+- `is_member_in_list($members, $new_member)`
 - add_member_to_file($user)
 - add_member($new_member)
-
---
 
 #### Where do you think the code change should happen?
 
@@ -399,7 +437,21 @@ function add_member($new_member){
 
 Update `is_member_in_list` function so that it checks for full name.
 ---
+### Technique 3: One responsibility per function / class
 
+The original `is_member_in_list` function
+
+```php
+function is_member_in_list($members, $new_member){
+  foreach($members as $member) {
+    if ($member[2] == $new_member[2]) // Email field
+      return true;
+  }
+  return false;
+}
+```
+
+---
 ### Technique 3: One responsibility per function / class
 
 Updated `is_member_in_list` function that checks for full name.
@@ -409,12 +461,12 @@ function is_member_in_list($members, $new_member){
   foreach($members as $member) {
     if ($member[2] == $new_member[2]) // Email field
       return true;
-    if (
-        $member[0] == $new_member[0] && // First name
-        $member[1] == $new_member[1]    // Last name
-    ) {
-    	return true;
-    }
+*   if (
+*       $member[0] == $new_member[0] && // First name
+*       $member[1] == $new_member[1]    // Last name
+*   ) {
+*   	return true;
+*   }
   }
   return false;
 }
@@ -429,10 +481,10 @@ function is_member_in_list($members, $new_member){
 - Readable code FTW!
 --
 
-- Broke up the behavior of the original function into separate functions - each doing 1 thing.
+- How to break up a long function into separate functions - each with 1 responsibility
 --
 
-- Future code changes can be easily made by changing one of the functions without affecting the API. 
+- Future code changes can be easily made by changing one of the functions without affecting the main function's API 
 ---
 
 class: center, middle
@@ -446,6 +498,8 @@ class: center, middle
 
 # To be continued...
 
+### (Next month?)
+
 ---
 
 class: center, middle
@@ -453,5 +507,15 @@ class: center, middle
 # Meanwhile... 
 
 ## Check out the sample codes.
+
+### https://github.com/CoderKungfu/refactoring_php_demo
+
+---
+
+class: center, middle
+
+# Questions?
+
+## Twitter: @CoderKungfu
 
 ### https://github.com/CoderKungfu/refactoring_php_demo
