@@ -13,23 +13,26 @@ class: center, middle
 # What is refactoring? Why do we do it?
 --
 
-- Software left alone will decay.
+- Software left alone will decay
 --
 
 - A change made to the internal structure of software to make it:
+
 --
 
-    1.  Easier to understand.
-	2.  Cheaper to make future changes.
+    1.  Easier to understand
 --
 
-- This does not change the observable behavior of the software.
+	2.  Cheaper to make future changes
 --
 
-- Improves the design of the code.
+- This does not change the observable behavior of the software
 --
 
-- Tests help ensure that we didn't change behavior.
+- Improves the design of the code
+--
+
+- Tests help ensure that we didn't change behavior
 ---
 
 # Common refactoring techniques:
@@ -44,7 +47,7 @@ class: center, middle
 3. One responsibility per function / class
 --
 
-4. Do not be obsessed with primitives
+4. **Do not be obsessed with primitives**
 ---
 
 class: center, middle
@@ -59,26 +62,26 @@ class: center, middle
 ### Why?
 --
 
-- Array & Associative Array are awesome as generic data containers. 
+- Array & Associative Array are awesome as generic data containers
 --
 
-- But they do not communicate intent. 
+- But they do not communicate intent
 --
 
-- Brittle - breaks easily if your API changes.
+- Brittle - breaks easily if your API changes
 ---
 ## Technique 4: Do not be obsessed with primitives
 
 ### Alternative
 --
 
-- Use classes / models to encapsulate behavior.
+- Use classes / models to encapsulate behavior
 --
 
-- Switch to compositional approach.
+- Switch to compositional approach
 --
 
-- Use objects that work together.
+- Use objects that work together
 ---
 
 ## Technique 4: Do not be obsessed with primitives
@@ -87,8 +90,11 @@ class: center, middle
 --
 
 Your manager came to you again, rubbing his hands, he says:
+--
 
 > I am thinking of adding a new field to the register. I'm getting confirmation from the directors. But in any case, can you make sure your script can support an address field in the future?
+
+.center.emoji[ 🤓🤓🤓 ]
 ---
 name: technique4_header
 
@@ -133,7 +139,7 @@ template: technique4_header
 - Instead of modeling the `$new_member` as an `array`, let's imagine it as an `object` with attributes and behaviors.
 --
 
-- To do this, we prepare some **Class Responsibility & Collaborators (CRC)** cards.
+- To do this, we prepare some **Class Responsibility & Collaborators (CRC)** cards
 
 
 --
@@ -169,7 +175,7 @@ Writes new member to CSV   |
 ```
 --
 
-Hmm... the `ClubMembershipRegister` class seems to know too much about how we store the data.
+Hmm... .emoji[ 🤔 ] the `ClubMembershipRegister` class seems to know too much about how we store the data
 ---
 template: technique4_header
 
@@ -188,7 +194,7 @@ Adds a member              |
 ```
 --
 
-#### Let's split the storage bits into a separate class.
+#### Let's split the storage bits into a separate class
 
 ```markdown
 Class: DataStore
@@ -219,6 +225,11 @@ class DataStore {
   public function append($data) { }
 }
 ```
+---
+class: center, middle
+
+# Let's write some tests!
+
 ---
 
 template: technique4_header
@@ -304,7 +315,7 @@ class Member {
 }
 ```
 
-We implement the constructor method.
+We implement the constructor method
 
 ---
 
@@ -369,3 +380,217 @@ public function __construct($options) {
   );
 }
 ```
+---
+class: center, middle
+
+# After some time...
+
+## Rinse and repeat for all classes
+
+---
+
+template: technique4_header
+
+#### The new classes: `Member`
+
+```php
+class Member {
+  public $first_name;
+  public $last_name;
+  public $email;
+
+  private static $known_fields = [ 'first_name', 'last_name', 'email' ];
+
+  public function __construct($options) {
+    foreach(self::$known_fields as $field_name) {
+      if (isset($options[$field_name]))
+        $this->$field_name = $options[$field_name];
+    }
+  }
+
+  public static function init_member($record) {
+    $options = array_combine(self::$known_fields, $record);
+    return new Member($options);
+  }
+  
+  ...
+```
+---
+
+template: technique4_header
+
+#### The new classes: `Member`
+
+```php
+  ...
+
+  public function equals(Member $query_member) {
+    if ($query_member->email == $this->email) return true;
+
+    if (
+      $query_member->first_name == $this->first_name &&
+      $query_member->last_name == $this->last_name
+    )
+      return true;
+
+    return false;
+  }
+
+  public function values() {
+    return get_object_vars($this);
+  }
+}
+```
+---
+
+template: technique4_header
+
+#### The new classes: `CSVDataStore`
+
+```php
+class CSVDataStore {
+  private static $csv_file;
+  private $file_handle;
+
+  public function __construct($options=array()) {
+    self::$csv_file = empty($options['file'])
+                        ? __DIR__ . '/members.csv'
+                        : $options['file'];
+
+    $this->file_handle = fopen(self::$csv_file, 'a+');
+  }
+
+  ...
+```
+---
+
+template: technique4_header
+
+#### The new classes: `CSVDataStore`
+
+```php
+  ...
+
+  public function read_all() {
+    rewind($this->file_handle);
+    $data = [];
+    while (($values = fgetcsv($this->file_handle)) !== FALSE) {
+      array_push($data, $values);
+    }
+    return $data;
+  }
+
+  public function append($data) {
+    return fputcsv($this->file_handle, $data) > 0;
+  }
+}
+```
+---
+
+template: technique4_header
+
+#### The new classes: `ClubMembershipRegister`
+
+```php
+class ClubMembershipRegister {
+  private $data_store;
+
+  public function __construct($data_store=null) {
+    $this->data_store = (empty($data_store)) ? new CSVDataStore() : $data_store;
+  }
+
+  public function all_members() {
+    $all_records = $this->data_store->read_all();
+    return array_map('Member::init_member', $all_records);
+  }
+
+  ...
+```
+---
+
+template: technique4_header
+
+#### The new classes: `ClubMembershipRegister`
+
+```php
+  ...
+
+  public function is_in_register(Member $query_member){
+    foreach($this->all_members() as $member) {
+      if ($member->equals($query_member))
+        return true;
+    }
+    return false;
+  }
+
+  public function add_member(Member $new_member) {
+    if ($this->is_in_register($new_member)) return false;
+
+    $new_record = $new_member->values();
+    $this->data_store->append($new_record);
+
+    return true;
+  }
+}
+```
+---
+
+template: technique4_header
+
+#### And finally... the revised `add_member` function
+
+```php
+$membership_register = new ClubMembershipRegister();
+
+function add_member(Array $member_data) {
+  global $membership_register;
+
+  $new_member = Member::init_member($member_data);
+
+  return $membership_register->add_member($new_member);
+}
+
+$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com'];
+var_dump(add_member($new_member));
+```
+---
+
+template: technique4_header
+
+#### A cleaner approach
+ 
+Change the actual implementation of the system:
+--
+
+```php
+$new_member = new Member([ 'first_name'=>'Michael',
+                           'last_name'=>'Jordan', 
+                           'email'=>'mj@nba.com' ]);
+
+$membership = new ClubMembershipRegister();
+var_dump($membership->add_member($new_member));
+```
+
+Possibly when your manager confirms the changes?
+---
+
+## Technique 4: Do not be obsessed with primitives
+
+### What have we learnt?
+--
+
+- Use **Class Responsibilities & Collaborators (CRC)** to identify boundaries around domain entities / models
+  
+--
+
+- Use **Test Driven Development (TDD)** to guide you
+
+--
+
+    - Makes sure your code changes didn't change behavior in subsequent refactoring attempts
+--
+
+    - Ensure you didn't introduce any bugs
+--
+
+    - Tests allows you to make changes with confidence

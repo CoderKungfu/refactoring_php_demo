@@ -16,23 +16,23 @@ class: center, middle
 # What is refactoring? Why do we do it?
 --
 
-- Software left alone will decay.
+- Software left alone will decay
 --
 
 - A change made to the internal structure of software to make it:
 --
 
-    1.  Easier to understand.
-	2.  Cheaper to make future changes.
+    1.  Easier to understand
+	2.  Cheaper to make future changes
 --
 
-- This does not change the observable behavior of the software.
+- This does not change the observable behavior of the software
 --
 
-- Improves the design of the code.
+- Improves the design of the code
 --
 
-- Tests help ensure that we didn't change behavior.
+- Tests help ensure that we didn't change behavior
 ---
 
 # Common refactoring techniques:
@@ -119,7 +119,7 @@ class: center, middle
 # No magic numbers / variables
 ---
 
-## Technique 2: No magic numbers / variables.
+## Technique 2: No magic numbers / variables
 
 ### Example - Mystery number
 --
@@ -135,7 +135,7 @@ echo amount_in_usd(100);
 
 What is `1.4`?
 ---
-## Technique 2: No magic numbers / variables.
+## Technique 2: No magic numbers / variables
 
 ### Example - Mystery number
 
@@ -151,7 +151,7 @@ function amount_in_usd($amount) {
 echo amount_in_usd(100);
 ```
 ---
-## Technique 2: No magic numbers / variables.
+## Technique 2: No magic numbers / variables
 
 ### Example - Mystery number in a `class`
 

@@ -91,3 +91,14 @@ class ClubMembershipRegister {
 // $new_member = new Member(['first_name'=>'Michael', 'last_name'=>'Jordan', 'email'=>'mj@nba.com']);
 // $membership = new ClubMembershipRegister();
 // var_dump($membership->add_member($new_member));
+
+//$membership_register = new ClubMembershipRegister();
+//
+//function add_member(Array $member_data) {
+//  global $membership_register;
+//  $new_member = Member::init_member($member_data);
+//  return $membership_register->add_member($new_member);
+//}
+//
+//$new_member = ['Michael', 'Cheng', 'miccheng@gmail.com'];
+//var_dump(add_member($new_member));

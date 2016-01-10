@@ -156,20 +156,22 @@ class Member {
   public $last_name;
   public $email;
 
+  private static $known_fields = [ 'first_name', 'last_name', 'email' ];
+
   public function __construct($options) {
-    $this->first_name = $options['first_name'];
-    $this->last_name = $options['last_name'];
-    $this->email = $options['email'];
+    foreach(self::$known_fields as $field_name) {
+      if (isset($options[$field_name]))
+        $this->$field_name = $options[$field_name];
+    }
   }
 
   public static function init_member($record) {
-    $options = array_combine(['first_name','last_name', 'email'], $record);
+    $options = array_combine(self::$known_fields, $record);
     return new Member($options);
   }
 
   public function equals(Member $query_member) {
-    if ($query_member->email == $this->email)
-      return true;
+    if ($query_member->email == $this->email) return true;
 
     if (
       $query_member->first_name == $this->first_name &&
@@ -181,21 +183,17 @@ class Member {
   }
 
   public function values() {
-    return [ $this->first_name, $this->last_name, $this->email ];
+    return get_object_vars($this);
   }
 }
 
 class CSVDataStore {
-  private static $membership_file;
+  private static $csv_file;
   private $file_handle;
 
   public function __construct($options=array()) {
-    echo self::$membership_file;
-
-    self::$membership_file = empty($options['file']) ? __DIR__ . '/members.csv' : $options['file'];
-
-
-    $this->file_handle = fopen(self::$membership_file, 'a+');
+    self::$csv_file = empty($options['file']) ? __DIR__ . '/members.csv' : $options['file'];
+    $this->file_handle = fopen(self::$csv_file, 'a+');
   }
 
   public function read_all() {
