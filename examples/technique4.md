@@ -47,18 +47,22 @@ To do this, we prepare some CRC cards:
 Class: Member
 ---------------------------------------------
 Member particulars         |
+                           |
 
 
 Class: ClubMembershipRegister
 ---------------------------------------------
+All members                |
 Who is a current member    |  Member
 Adds a member              |  DataStore
+                           |
 
 
 Class: DataStore
 ---------------------------------------------
 Read from CSV file         |
 Writes to CSV file         |
+                           |
 ```
 
 ### From CRC to Class
